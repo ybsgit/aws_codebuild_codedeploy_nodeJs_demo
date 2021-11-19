@@ -1,0 +1,21 @@
+version: 0.2
+run-as: root 
+phases:
+  pre_build: #login to ECR
+    commands:
+     - echo Logging in to Amazon ECR...
+     - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+  build: #build image
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...  
+      - docker build -t $REPO_NAME .
+      - docker tag $REPO_NAME:latest $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION
+  post_build: #push image to ECR
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+artifacts: 
+  - files: imagedefinitions.json
