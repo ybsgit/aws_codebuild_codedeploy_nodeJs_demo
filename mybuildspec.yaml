@@ -8,6 +8,7 @@ phases:
   build: #build image
     commands:
       - echo Build started on `date`
+      - docker login -u web927 -p $DOCKERPASS
       - echo Building the Docker image...  
       - docker build -t $REPO_NAME .
       - docker tag $REPO_NAME:latest $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION
