@@ -7,7 +7,7 @@ phases:
     commands:
    # generate kubeconfig file and make sure cluster can be accessed with kubectl command
      - rm -f /root/.kube/config
-     - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name cicd-demo 
+     - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name cicd-demo --role-arn arn:aws:iam::534173283575:role/service-role/codebuild-eks-cicd-service-role
      - kubectl config view --minify
      - kubectl get svc
   # login to ECR and pull image. 

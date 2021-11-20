@@ -7,7 +7,7 @@ data:
       rolearn: arn:aws:iam::534173283575:role/eksctl-cicd-demo-nodegroup-ng-1-NodeInstanceRole-COKPXOA5DEZ2
       username: system:node:{{EC2PrivateDNSName}}
     - rolearn: arn:aws:iam::534173283575:role/service-role/codebuild-eks-cicd-service-role
-      username: codebuild-eks-cicd-service-role
+      username: arn:aws:eks:us-east-1:534173283575:cluster/cicd-demo
       groups:
        - system:masters
   mapUsers: |
@@ -16,9 +16,9 @@ kind: ConfigMap
 metadata:
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","data":{"mapRoles":"- groups:\n  - system:bootstrappers\n  - system:nodes\n  rolearn: arn:aws:iam::534173283575:role/eksctl-cicd-demo-nodegroup-ng-1-NodeInstanceRole-COKPXOA5DEZ2\n  username: system:node:{{EC2PrivateDNSName}}\n","mapUsers":"[]\n"},"kind":"ConfigMap","metadata":{"annotations":{},"creationTimestamp":"2021-11-20T01:53:25Z","name":"aws-auth","namespace":"kube-system","resourceVersion":"22630","uid":"eac4ed8d-8026-4747-96bc-fa5ff611ce1d"}}
+      {"apiVersion":"v1","data":{"mapRoles":"- groups:\n  - system:bootstrappers\n  - system:nodes\n  rolearn: arn:aws:iam::534173283575:role/eksctl-cicd-demo-nodegroup-ng-1-NodeInstanceRole-COKPXOA5DEZ2\n  username: system:node:{{EC2PrivateDNSName}}\n- rolearn: arn:aws:iam::534173283575:role/service-role/codebuild-eks-cicd-service-role\n  username: codebuild-eks-cicd-service-role\n  groups:\n   - system:masters\n","mapUsers":"[]\n"},"kind":"ConfigMap","metadata":{"annotations":{},"creationTimestamp":"2021-11-20T01:53:25Z","name":"aws-auth","namespace":"kube-system","resourceVersion":"28855","uid":"eac4ed8d-8026-4747-96bc-fa5ff611ce1d"}}
   creationTimestamp: "2021-11-20T01:53:25Z"
   name: aws-auth
   namespace: kube-system
-  resourceVersion: "28855"
+  resourceVersion: "29815"
   uid: eac4ed8d-8026-4747-96bc-fa5ff611ce1d
