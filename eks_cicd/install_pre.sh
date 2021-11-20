@@ -45,3 +45,4 @@ curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/d
 chmod +x $HOME/bin/eksctl
 eksctl version
 fi
+aws sts get-caller-identity
