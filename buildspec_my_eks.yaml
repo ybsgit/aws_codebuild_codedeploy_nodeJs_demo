@@ -1,0 +1,29 @@
+version: 0.2
+phases:
+  install: #install kubectl aws-cli iam authenticator eksctl
+    commands:
+     - bash eks_cicd/install_pre.sh
+  pre_build: 
+    commands:
+   # generate kubeconfig file and make sure cluster can be accessed with kubectl command
+     - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name cicd-demo
+     - kubectl config view --minify
+     - kubectl get svc
+  # login to ECR and pull image. 
+     - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com 
+     - REPO_URL=$ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME
+     - docker pull $REPO_URL:$IMAGE_TAG
+
+  build: 
+    commands:
+   #build and tag the docker image
+      - docker build -t $REPO_NAME:$IMAGE_TAG .
+      - docker tag $REPO_NAME:$IMAGE_TAG $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG
+
+  post_build:
+  #push the docker image
+    commands:
+      - docker push $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG
+  # create deployment with docker image
+      - kubectl apply -f eks_cicd/deployment.yaml
+      - kubectl rollout restart -f eks_cicd/deployment.yaml
